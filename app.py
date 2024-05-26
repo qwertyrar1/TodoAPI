@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_restful import Api
 from config import Config
-from resources import TaskListResource, TaskResource
-from errors import register_error_handlers
+from api.resources import TaskListResource, TaskResource
+from api.errors import register_error_handlers
 
 app = Flask(__name__)
 app.config.from_object(Config)
