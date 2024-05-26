@@ -1,7 +1,10 @@
 from flask import request
-from flask_restful import Resource, fields, marshal_with
+from flask_restful import Resource, fields, marshal_with, reqparse
+from db.models import Task
 from db.dals import TaskDAL
 from db.session import get_db_session
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import NoResultFound
 
 task_fields = {
     'id': fields.String,
@@ -9,7 +12,6 @@ task_fields = {
     'description': fields.String,
     'created_at': fields.DateTime,
     'updated_at': fields.DateTime,
-
 }
 
 
@@ -25,6 +27,10 @@ class TaskResource(Resource):
                 return task
             else:
                 return {'message': 'Task not found'}, 404
+        except NoResultFound:
+            return {'message': 'Task not found'}, 404
+        except Exception as e:
+            return {'message': str(e)}, 500
         finally:
             session.close()
 
@@ -37,6 +43,11 @@ class TaskResource(Resource):
             task = dal.create_task(title=data['title'], description=data['description'])
             session.expunge(task)
             return task, 201
+        except IntegrityError:
+            session.rollback()
+            return {'message': 'Task with the same ID already exists'}, 400
+        except Exception as e:
+            return {'message': str(e)}, 500
         finally:
             session.close()
 
@@ -52,6 +63,13 @@ class TaskResource(Resource):
                 return task
             else:
                 return {'message': 'Task not found'}, 404
+        except NoResultFound:
+            return {'message': 'Task not found'}, 404
+        except IntegrityError:
+            session.rollback()
+            return {'message': 'Task with the same ID already exists'}, 400
+        except Exception as e:
+            return {'message': str(e)}, 500
         finally:
             session.close()
 
@@ -64,6 +82,10 @@ class TaskResource(Resource):
                 return {'message': 'Task deleted'}, 200
             else:
                 return {'message': 'Task not found'}, 404
+        except NoResultFound:
+            return {'message': 'Task not found'}, 404
+        except Exception as e:
+            return {'message': str(e)}, 500
         finally:
             session.close()
 
@@ -78,6 +100,8 @@ class TaskListResource(Resource):
             for task in tasks:
                 session.expunge(task)
             return tasks
+        except Exception as e:
+            return {'message': str(e)}, 500
         finally:
             session.close()
 
@@ -90,8 +114,14 @@ class TaskListResource(Resource):
             task = dal.create_task(title=data['title'], description=data['description'])
             session.expunge(task)
             return task, 201
+        except IntegrityError:
+            session.rollback()
+            return {'message': 'Task with the same ID already exists'}, 400
+        except Exception as e:
+            return {'message': str(e)}, 500
         finally:
             session.close()
+
 
 
 
