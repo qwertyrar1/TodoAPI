@@ -1,16 +1,15 @@
 from flask import Flask
-from flask_restful import Api
+from flask_restx import Api
 from config import Config
-from api.resources import TaskListResource, TaskResource
+from api.resources import api as tasks_ns
 from api.errors import register_error_handlers
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
-api = Api(app)
+api = Api(app, version='1.0', title='My API', description='A simple demonstration API')
 
-api.add_resource(TaskListResource, '/tasks')
-api.add_resource(TaskResource, '/tasks/<string:task_id>')
+api.add_namespace(tasks_ns, path='/tasks')
 
 register_error_handlers(app)
 

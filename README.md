@@ -17,3 +17,6 @@ from myapp import mymodel
 - Дальше вводим: ```alembic revision --autogenerate -m "comment"``` - делается при любых изменениях моделей
 - Будет создана миграция
 - Дальше вводим: ```alembic upgrade heads```
+- В файле ```.env``` необходимо прописать значения переменным окружения:
+- ```DATABASE_URL``` - адресс вашей базы данных
+- ```BASE_URL``` - адресс вашего Flask сервера
