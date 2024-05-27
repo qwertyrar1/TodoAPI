@@ -6,6 +6,9 @@ from config import Config
 
 @pytest.fixture
 def created_task():
+    """
+    Fixture for creating a task and ensuring it gets deleted after tests.
+    """
     response = requests.post(
         f"{Config.BASE_URL}/tasks",
         json={"title": "Test Task", "description": "This is a test task."}

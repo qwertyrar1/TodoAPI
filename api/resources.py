@@ -1,6 +1,5 @@
 from flask import request
-from flask_restful import Resource, fields, marshal_with, reqparse
-from db.models import Task
+from flask_restful import Resource, fields, marshal_with
 from db.dals import TaskDAL
 from db.session import get_db_session
 from sqlalchemy.exc import IntegrityError
@@ -18,6 +17,9 @@ task_fields = {
 class TaskResource(Resource):
     @marshal_with(task_fields)
     def get(self, task_id):
+        """
+        Get a task by ID.
+        """
         session = get_db_session()
         try:
             dal = TaskDAL(session)
@@ -36,6 +38,9 @@ class TaskResource(Resource):
 
     @marshal_with(task_fields)
     def post(self):
+        """
+        Create a new task in the database.
+        """
         session = get_db_session()
         try:
             data = request.get_json()
@@ -53,6 +58,9 @@ class TaskResource(Resource):
 
     @marshal_with(task_fields)
     def put(self, task_id):
+        """
+        Update an existing task by ID.
+        """
         session = get_db_session()
         try:
             data = request.get_json()
@@ -74,6 +82,9 @@ class TaskResource(Resource):
             session.close()
 
     def delete(self, task_id):
+        """
+        Delete a task by ID.
+        """
         session = get_db_session()
         try:
             dal = TaskDAL(session)
@@ -93,6 +104,9 @@ class TaskResource(Resource):
 class TaskListResource(Resource):
     @marshal_with(task_fields)
     def get(self):
+        """
+        Get all tasks.
+        """
         session = get_db_session()
         try:
             dal = TaskDAL(session)
@@ -107,6 +121,9 @@ class TaskListResource(Resource):
 
     @marshal_with(task_fields)
     def post(self):
+        """
+        Create a new task in the database.
+        """
         session = get_db_session()
         try:
             data = request.get_json()
